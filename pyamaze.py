@@ -686,15 +686,21 @@ class maze:
         self._win.bind('<space>', lambda event: self.changeGoal(event, goals=goals, a=agent))
 
     def changeGoal(self, event, goals, a):
-        
+        colors = [COLOR.blue, COLOR.red, COLOR.yellow]
+
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.dark) #Set the original goal to dark color
         self._goal = goals[self._counter] #Set new goal
+        print(self._goal)
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.green) #Set the new goal to green color
+        
         a.stop = True
-        self._counter += 1
+
         path = IDS(self, (a.x, a.y))
-        b = agent(self, a.x, a.y, footprints=True, color=COLOR.red)
-        self.tracePath({a:path})
+        b = agent(self, a.x, a.y, footprints=True, color=colors[self._counter])
+        self.tracePath({b:path})
+        self._counter += 1
+
+        self.enableChangeGoal(goals, b)
         
 
     _tracePathList=[]
@@ -718,7 +724,7 @@ class maze:
             self._canvas.create_oval(y + w/2.5+w/20, x + w/2.5+w/20,y + w/2.5 +w/4-w/20, x + w/2.5 +w/4-w/20,fill='red',outline='red',tag='ov')
             self._canvas.tag_raise('ov')
        
-        if (a.x,a.y)==(a.goal):
+        if (a.x,a.y)==(a.goal) or a.stop == True:
             del maze._tracePathList[0][0][a]
             if maze._tracePathList[0][0]=={}:
                 del maze._tracePathList[0]
@@ -777,7 +783,6 @@ class maze:
                     if len(maze._tracePathList)>0:
                         self.tracePath(maze._tracePathList[0][0],kill=maze._tracePathList[0][1],delay=maze._tracePathList[0][2])
                 if kill:
-                    
                     self._win.after(300, killAgent,a)         
                 return
             if a.shape=='arrow':
@@ -873,8 +878,7 @@ class maze:
                 a.x,a.y=p[0]
                 del p[0]
 
-        if a.stop == False:
-            self._win.after(delay, self._tracePathSingle,a,p,kill,showMarked,delay)    
+        self._win.after(delay, self._tracePathSingle,a,p,kill,showMarked,delay)    
 
     def tracePath(self,d,kill=False,delay=300,showMarked=False):
         '''

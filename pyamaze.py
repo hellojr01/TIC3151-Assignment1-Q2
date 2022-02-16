@@ -690,7 +690,6 @@ class maze:
 
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.dark) #Set the original goal to dark color
         self._goal = goals[self._counter] #Set new goal
-        print(self._goal)
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.green) #Set the new goal to green color
         
         a.stop = True
@@ -701,7 +700,6 @@ class maze:
         self._counter += 1
 
         self.enableChangeGoal(goals, b)
-        
 
     _tracePathList=[]
     def _tracePathSingle(self,a,p,kill,showMarked,delay):
@@ -885,6 +883,7 @@ class maze:
         A method to trace path by agent
         You can provide more than one agent/path details
         '''
+        self._tracePathList.clear()
         self._tracePathList.append((d,kill,delay))
         if maze._tracePathList[0][0]==d: 
             for a,p in d.items():

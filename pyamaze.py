@@ -3,6 +3,9 @@ from tkinter import *
 from enum import Enum
 from collections import deque
 
+from AStarSearch import aStar
+from IterativeDeepeningSearch import IDS
+
 class COLOR(Enum):
     '''
     This class is created to use the Tkinter colors easily.
@@ -74,7 +77,10 @@ class agent:
             self.goal=goal
         self._body=[]
         self.position=(self.x,self.y)
-        
+        self.stop = False
+    
+    
+
     @property
     def x(self):
         return self._x
@@ -223,6 +229,7 @@ class agent:
         if self._parentMaze.maze_map[self.x,self.y]['S']==True:
             self.x=self.x+1
             self.y=self.y
+
 class textLabel:
     '''
     This class is to create Text Label to show different results on the window.
@@ -285,6 +292,8 @@ class maze:
         self._canvas=None
         self._agents=[]
         self.markCells=[]
+        self._counter = 1
+
 
     @property
     def grid(self):
@@ -672,8 +681,21 @@ class maze:
         self._win.bind('<d>',a.moveRight)
         self._win.bind('<w>',a.moveUp)
         self._win.bind('<s>',a.moveDown)
+    
+    def enableChangeGoal(self, goals, agent):
+        self._win.bind('<space>', lambda event: self.changeGoal(event, goals=goals, a=agent))
 
-
+    def changeGoal(self, event, goals, a):
+        
+        agent(self,*self._goal,shape='square',filled=True,color=COLOR.dark) #Set the original goal to dark color
+        self._goal = goals[self._counter] #Set new goal
+        agent(self,*self._goal,shape='square',filled=True,color=COLOR.green) #Set the new goal to green color
+        a.stop = True
+        self._counter += 1
+        path = IDS(self, (a.x, a.y))
+        b = agent(self, a.x, a.y, footprints=True, color=COLOR.red)
+        self.tracePath({a:path})
+        
 
     _tracePathList=[]
     def _tracePathSingle(self,a,p,kill,showMarked,delay):
@@ -851,7 +873,8 @@ class maze:
                 a.x,a.y=p[0]
                 del p[0]
 
-        self._win.after(delay, self._tracePathSingle,a,p,kill,showMarked,delay)    
+        if a.stop == False:
+            self._win.after(delay, self._tracePathSingle,a,p,kill,showMarked,delay)    
 
     def tracePath(self,d,kill=False,delay=300,showMarked=False):
         '''

@@ -682,10 +682,13 @@ class maze:
         self._win.bind('<w>',a.moveUp)
         self._win.bind('<s>',a.moveDown)
     
-    def enableChangeGoal(self, goals, agent):
-        self._win.bind('<space>', lambda event: self.changeGoal(event, goals=goals, a=agent))
+    def enableChangeGoal(self, goals, agent, algorithm):
+        self._win.bind('<space>', lambda event: self.changeGoal(event, goals=goals, a=agent, algorithm=algorithm))
 
-    def changeGoal(self, event, goals, a):
+    def changeGoal(self, event, goals, a, algorithm):
+        if(self._counter > 2):
+            return
+
         colors = [COLOR.blue, COLOR.red, COLOR.yellow]
 
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.dark) #Set the original goal to dark color
@@ -694,12 +697,17 @@ class maze:
         
         a.stop = True
 
-        path = IDS(self, (a.x, a.y))
+        if algorithm == 'Iterative Deepening Search':
+            path = IDS(self, (a.x, a.y))
+        else:
+            path = aStar(self, (a.x, a.y))
+
         b = agent(self, a.x, a.y, footprints=True, color=colors[self._counter])
-        self.tracePath({b:path})
+        self.tracePath({b:path}, delay=100)
+        l=textLabel(self, (algorithm + ' Path Length'),len(path)+1)
         self._counter += 1
 
-        self.enableChangeGoal(goals, b)
+        self.enableChangeGoal(goals, b, algorithm)
 
     _tracePathList=[]
     def _tracePathSingle(self,a,p,kill,showMarked,delay):

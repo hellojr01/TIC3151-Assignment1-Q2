@@ -13,6 +13,9 @@ def IDS(m, start):
 
         depth_count = currCell[0] + 1
 
+        if cell == m._goal:
+            break
+
         # explored.append(cell)
         
         # Finding neighbor cells
@@ -40,9 +43,6 @@ def IDS(m, start):
                 frontier.append((depth_count, childCell))
                 # Set parent of this neighbor to the current cell
                 dfsPath[childCell] = cell
-
-                if childCell == m._goal:
-                    break
 
     # Trace back from the goal to the START cell
     fwdPath = {}

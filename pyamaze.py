@@ -1,4 +1,4 @@
-import random,datetime,csv,os
+import random,datetime,csv,os,time
 from tkinter import *
 from enum import Enum
 from collections import deque
@@ -293,7 +293,8 @@ class maze:
         self._agents=[]
         self.markCells=[]
         self._counter = 1
-
+        self._time_AStar=[]
+        self._time_IDS=[]
 
     @property
     def grid(self):
@@ -696,12 +697,34 @@ class maze:
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.green) #Set the new goal to green color
         
         a.stop = True
-
+        
+        # Calculate time
+        
         if algorithm == 'Iterative Deepening Search':
-            path = IDS(self, (a.x, a.y))
-        else:
+            t0= time.time()
             path = aStar(self, (a.x, a.y))
+            t1 = time.time()
+            duration = round(t1 - t0, 4)
+            self._time_AStar.append(duration)
 
+            t0= time.time()
+            path = IDS(self, (a.x, a.y))
+            t1 = time.time()
+            duration = round(t1 - t0, 4)
+            self._time_IDS.append(duration)
+        else:
+            t0= time.time()
+            path = IDS(self, (a.x, a.y))
+            t1 = time.time()
+            duration = round(t1 - t0, 4)
+            self._time_IDS.append(duration)
+
+            t0= time.time()
+            path = aStar(self, (a.x, a.y))
+            t1 = time.time()
+            duration = round(t1 - t0, 4)
+            self._time_AStar.append(duration)
+        
         b = agent(self, a.x, a.y, footprints=True, color=colors[self._counter])
         self.tracePath({b:path}, delay=100)
         l=textLabel(self, (algorithm + ' Path Length'),len(path)+1)

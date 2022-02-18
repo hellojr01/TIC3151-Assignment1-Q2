@@ -1,22 +1,16 @@
-
-
 def IDS(m, start):
-    depth_count = 0
-    frontier = [(depth_count, start)]
+    level = 0
+    frontier = [(level, start)]
     explored = [start]
     
-    dfsPath = {}
+    idsPath = {}
     while len(frontier) > 0:
-        frontier.sort(key=lambda x: x[0])
         currCell = frontier.pop(0)
         cell = currCell[1]
-
-        depth_count = currCell[0] + 1
+        level = currCell[0] + 1
 
         if cell == m._goal:
             break
-
-        # explored.append(cell)
         
         # Finding neighbor cells
         for d in "EWSN":
@@ -31,8 +25,6 @@ def IDS(m, start):
                 elif d=="W":
                     childCell = (cell[0], cell[1]-1)
                 elif d=="E":
-                    # next cell
-                    # coordinate (row,column)
                     childCell = (cell[0], cell[1]+1)
 
                 # if the location has been explored                
@@ -40,14 +32,14 @@ def IDS(m, start):
                     continue
                 explored.append(childCell)
 
-                frontier.append((depth_count, childCell))
+                frontier.append((level, childCell))
                 # Set parent of this neighbor to the current cell
-                dfsPath[childCell] = cell
+                idsPath[childCell] = cell 
 
     # Trace back from the goal to the START cell
     fwdPath = {}
     while cell != start:
-        fwdPath[dfsPath[cell]] = cell
-        cell = dfsPath[cell]
+        fwdPath[idsPath[cell]] = cell
+        cell = idsPath[cell]
 
     return fwdPath

@@ -696,7 +696,7 @@ class maze:
         self._goal = goals[self._counter] #Set new goal
         agent(self,*self._goal,shape='square',filled=True,color=COLOR.green) #Set the new goal to green color
         
-        a.stop = True
+        a.stop = True #Set the status of the agent.stop to True
         
         # Calculate time
         
@@ -725,10 +725,10 @@ class maze:
             duration = round(t1 - t0, 4)
             self._time_AStar.append(duration)
         
-        b = agent(self, a.x, a.y, footprints=True, color=colors[self._counter])
-        self.tracePath({b:path}, delay=100)
+        b = agent(self, a.x, a.y, footprints=True, color=colors[self._counter], filled=True)
+        self.tracePath({b:path}, delay=50)
         l=textLabel(self, (algorithm + ' Path Length'),len(path)+1)
-        self._counter += 1
+        self._counter += 1 # A counter to determine which goal is running
 
         self.enableChangeGoal(goals, b, algorithm)
 
